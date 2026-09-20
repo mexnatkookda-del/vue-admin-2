@@ -14,7 +14,7 @@ export function useCategories() {
     loading.value = true
     error.value = ''
     try {
-      items.value = await $fetch('/api/admin/categories')
+      items.value = await $fetch('/api/admin/categories/')
     } catch {
       error.value = 'Не удалось загрузить категории'
     } finally {
