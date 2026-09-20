@@ -6,7 +6,7 @@ async function login() {
   error.value = ''
 
   try {
-    await $fetch('/api/login', {
+    await $fetch('/api/admin/login', {
       method: 'POST',
       body: { password: password.value }
     })
