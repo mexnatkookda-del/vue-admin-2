@@ -40,7 +40,7 @@ onMounted(load)
 
       <div class="flex justify-between text-base font-extralight">
         <span>Кол-во товаров</span>
-        <span>{{ category.productCount ?? 0 }}</span>
+        <span>{{ category.productsCount ?? 0 }}</span>
       </div>
 
       <div class="flex gap-4">

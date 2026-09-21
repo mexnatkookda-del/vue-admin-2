@@ -1,3 +1,3 @@
 <script setup>
-await navigateTo('/admin/products')
+await navigateTo('/admin/categories')
 </script>

@@ -23,25 +23,10 @@ export function useCategories() {
   }
 
 
-  /*
   function remove(id) {
     console.log('Удалить категорию', id)
   } 
     
-  ниже вариант от гемини
-*/
-
-  async function remove(id) {
-    if (!confirm('Удалить эту категорию?')) return
-
-    error.value = ''
-    try {
-      await $fetch(`/api/admin/categories/${id}`, { method: 'DELETE' })
-      items.value = items.value.filter(item => item.id !== id)
-    } catch {
-      error.value = 'Не удалось удалить категорию'
-    }
-  } 
 
   function edit(id) {
     console.log('Редактировать категорию', id)

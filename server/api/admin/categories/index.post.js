@@ -1,23 +1,19 @@
-import { db } from '~/server/db'
-import { categories } from '~/server/db/schema'
+import { db } from '../../../db/index'
+import { categories } from '../../../db/schema'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  // Простая валидация
-  if (!body.name || typeof body.name !== 'string') {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Название категории обязательно'
-    })
+  if (!body.name || !body.name.trim()) {
+    throw createError({ statusCode: 400, message: 'Название обязательно' })
   }
 
-  const newCategory = await db.insert(categories).values({
+  const result = db.insert(categories).values({
     name: body.name.trim(),
-    description: body.description?.trim() || '',
+    description: body.description || null,
     image: body.image || null,
     createdAt: new Date()
-  }).returning()
+  }).run()
 
-  return newCategory[0]
+  return { id: result.lastInsertRowid }
 })
