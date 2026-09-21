@@ -12,7 +12,7 @@ const { isModalOpen, editing, form, closeModal, save } = useCategories()
         <h2 class="text-[32px] font-extralight">
           {{ editing ? 'Редактировать' : 'Новая категория' }}
         </h2>
-        <button @click="closeModal" class="w-12 h-12 flex items-center justify-center hover:opacity-70">
+        <button @click="closeModal" class="bg-[#ffffff] rounded-lg border-solid border-[rgba(0,0,0,0.50)] border-[0.5px] w-12 h-12 flex items-center justify-center hover:opacity-70">
           <img src="/close.svg" class="w-5 h-5" alt="Закрыть">
         </button>
       </div>
