@@ -4,7 +4,7 @@ export const categories = sqliteTable('categories', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   description: text('description'),
-  image: text('image'),
+  images: text('images').notNull().default('[]'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 })
 

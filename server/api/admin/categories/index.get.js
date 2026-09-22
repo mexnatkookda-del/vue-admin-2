@@ -8,7 +8,7 @@ export default defineEventHandler(async () => {
       id: categories.id,
       name: categories.name,
       description: categories.description,
-      image: categories.image,
+      images: categories.images,
       createdAt: categories.createdAt,
       productsCount: count(products.id)
     })

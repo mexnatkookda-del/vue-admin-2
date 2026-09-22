@@ -12,9 +12,9 @@ if (existing.length > 0) {
 }
 
 db.insert(categories).values([
-  { id: 1, name: 'Без категории', description: 'Сюда попадают товары без категории', image: null, createdAt: new Date() },
-  { name: 'Одежда', description: 'Основная коллекция', image: 'cloth.jpg', createdAt: new Date() },
-  { name: 'Аксессуары', description: null, image: 'acc.jpg', createdAt: new Date() }
+  { id: 1, name: 'Без категории', description: 'Сюда попадают товары без категории', images: '[]', createdAt: new Date() },
+  { name: 'Одежда', description: 'Основная коллекция', images: '["cloth.jpg"]', createdAt: new Date() },
+  { name: 'Аксессуары', description: null, images: '["acc.jpg"]', createdAt: new Date() }
 ]).run()
 
 db.insert(products).values([

@@ -1,24 +1,33 @@
+// Единый на всё приложение менеджер картинок для категорий.
+// Создаётся один раз при первой загрузке модуля.
+let categoryImagesInstance = null
+
+function getCategoryImages() {
+  if (!categoryImagesInstance) {
+    categoryImagesInstance = useImagesManager()
+  }
+  return categoryImagesInstance
+}
+
 export function useCategories() {
   const items = useState('admin-categories-items', () => [])
   const search = ref('')
   const loading = ref(false)
   const error = ref('')
-
-  // сортировка одной строкой: поле-направление
   const sort = ref('date-desc')
 
-  // модалка: editing = null → создаём, объект → правим
   const isModalOpen = useState('admin-categories-modal-open', () => false)
   const editing = useState('admin-categories-editing', () => null)
   const form = useState('admin-categories-form', () => ({
     name: '',
-    description: '',
-    image: ''
+    description: ''
   }))
+
+  const categoryImages = getCategoryImages()
 
   const filtered = computed(() =>
     items.value
-      .filter(i => i.id !== 1) // "Без категории" не показываем
+      .filter(i => i.id !== 1)
       .filter(i => i.name.toLowerCase().includes(search.value.toLowerCase()))
   )
 
@@ -34,7 +43,6 @@ export function useCategories() {
     return list
   })
 
-  // для таблицы на планшете/десктопе: клик по заголовку колонки
   function toggleSort(field) {
     const [currentField, currentDir] = sort.value.split('-')
     sort.value = currentField === field
@@ -58,7 +66,7 @@ export function useCategories() {
     editing.value = null
     form.value.name = ''
     form.value.description = ''
-    form.value.image = ''
+    categoryImages.clear()
     isModalOpen.value = true
   }
 
@@ -66,7 +74,15 @@ export function useCategories() {
     editing.value = category
     form.value.name = category.name
     form.value.description = category.description || ''
-    form.value.image = category.image || ''
+
+    let existingPaths = []
+    try {
+      existingPaths = JSON.parse(category.images || '[]')
+    } catch {
+      existingPaths = []
+    }
+    categoryImages.setExistingImages(existingPaths)
+
     isModalOpen.value = true
   }
 
@@ -76,14 +92,39 @@ export function useCategories() {
 
   async function save() {
     try {
-      if (editing.value) {
-        await $fetch(`/api/admin/categories/${editing.value.id}`, { method: 'PUT', body: form.value })
-      } else {
-        await $fetch('/api/admin/categories/', { method: 'POST', body: form.value })
-      }
-      
-      await load()
+      // 1. Если есть новые файлы — сначала загружаем их на сервер
+      const newFiles = categoryImages.getNewFiles()
+      let uploadedPaths = []
 
+      if (newFiles.length > 0) {
+        const formData = new FormData()
+        for (const file of newFiles) {
+          formData.append('images', file)
+        }
+        const response = await $fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData
+        })
+        uploadedPaths = response.paths
+      }
+
+      // 2. Собираем финальный порядок картинок (старые + новые)
+      const finalImages = categoryImages.buildFinalPathsList(uploadedPaths)
+
+      // 3. Отправляем обычные данные формы + список картинок
+      const payload = {
+        name: form.value.name,
+        description: form.value.description,
+        images: finalImages
+      }
+
+      if (editing.value) {
+        await $fetch(`/api/admin/categories/${editing.value.id}`, { method: 'PUT', body: payload })
+      } else {
+        await $fetch('/api/admin/categories/', { method: 'POST', body: payload })
+      }
+
+      await load()
       closeModal()
     } catch (e) {
       error.value = e?.data?.message || 'Не удалось сохранить'
@@ -103,6 +144,6 @@ export function useCategories() {
   return {
     items, search, sort, sorted, loading, error, load,
     toggleSort, openCreate, startEdit, closeModal, save, remove,
-    isModalOpen, editing, form
+    isModalOpen, editing, form, categoryImages
   }
 }

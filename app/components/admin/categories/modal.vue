@@ -1,5 +1,5 @@
 <script setup>
-const { isModalOpen, editing, form, closeModal, save } = useCategories()
+const { isModalOpen, editing, form, closeModal, save, categoryImages } = useCategories()
 </script>
 
 <template>
@@ -32,12 +32,7 @@ const { isModalOpen, editing, form, closeModal, save } = useCategories()
         class="bg-white rounded-lg border border-black/50 p-4 text-base font-extralight w-full outline-none resize-none"
       ></textarea>
 
-      <label class="text-base font-extralight">Картинка (имя файла)</label>
-      <input
-        v-model="form.image"
-        placeholder="cloth.jpg"
-        class="bg-white rounded-lg border border-black/50 p-4 text-base font-extralight w-full outline-none"
-      >
+      <AdminImagesManager :manager="categoryImages" label="Изображения категории" />
 
       <div class="flex gap-4">
         <button

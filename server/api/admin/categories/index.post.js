@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   const result = db.insert(categories).values({
     name: body.name.trim(),
     description: body.description || null,
-    image: body.image || null,
+    images: JSON.stringify(body.images || []),
     createdAt: new Date()
   }).run()
 

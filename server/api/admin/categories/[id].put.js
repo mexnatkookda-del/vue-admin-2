@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   db.update(categories).set({
     name: body.name.trim(),
     description: body.description || null,
-    image: body.image || null
+    images: JSON.stringify(body.images || [])
   }).where(eq(categories.id, id)).run()
 
   return { ok: true }
